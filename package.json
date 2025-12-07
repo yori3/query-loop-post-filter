@@ -1,0 +1,15 @@
+{
+  "name": "query-loop-post-filter",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "クエリーループブロックに投稿タイトルで絞り込む機能を追加",
+  "devDependencies": {
+    "@wordpress/scripts": "^31.1.0"
+  }
+}

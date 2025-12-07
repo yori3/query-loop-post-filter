@@ -1,0 +1,13 @@
+// FormTokenFieldのスタイル調整
+.components-form-token-field__input-container {
+    .components-form-token-field__token {
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        padding: 4px 8px;
+        margin: 2px;
+        
+        .components-form-token-field__remove-token {
+            color: #cc1818;
+        }
+    }
+}
