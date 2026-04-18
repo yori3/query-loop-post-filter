@@ -1,15 +1,13 @@
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { InspectorControls } from '@wordpress/block-editor';
-import { 
+import {
     PanelBody,
     FormTokenField,
     Spinner
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from '@wordpress/element';
-import apiFetch from '@wordpress/api-fetch';
-import { addQueryArgs } from '@wordpress/url';
+import { useEntityRecords } from '@wordpress/core-data';
 
 /**
  * クエリーループブロックに投稿タイトルフィルターを追加
@@ -25,38 +23,22 @@ const withPostTitleFilter = createHigherOrderComponent((BlockEdit) => {
         const { query = {} } = attributes;
         const { include = [], postType = 'post' } = query;
 
-        const [posts, setPosts] = useState([]);
-        const [loading, setLoading] = useState(true);
-        const [suggestions, setSuggestions] = useState([]);
-
         // 投稿一覧を取得（クエリの投稿タイプに基づく）
-        useEffect(() => {
-            setLoading(true);
-            
-            // 投稿タイプを取得
-            const currentPostType = postType || 'post';
-            
-            apiFetch({
-                path: addQueryArgs(`/wp/v2/${currentPostType}`, {
-                    per_page: 100,
-                    _fields: 'id,title',
-                    orderby: 'title',
-                    order: 'asc',
-                }),
-            })
-                .then((fetchedPosts) => {
-                    setPosts(fetchedPosts);
-                    
-                    const titles = fetchedPosts.map(post => 
-                        post.title.rendered || `(ID: ${post.id})`
-                    );
-                    setSuggestions(titles);
-                    setLoading(false);
-                })
-                .catch(() => {
-                    setLoading(false);
-                });
-        }, [postType]);
+        const { records: fetchedPosts, isResolving: loading } = useEntityRecords(
+            'postType',
+            postType,
+            {
+                per_page: 100,
+                _fields: 'id,title',
+                orderby: 'title',
+                order: 'asc',
+            }
+        );
+
+        const posts = fetchedPosts ?? [];
+        const suggestions = posts.map(
+            post => post.title?.rendered || `(ID: ${post.id})`
+        );
 
         // 選択されたIDからタイトルを取得
         const getSelectedTitles = () => {
@@ -114,7 +96,7 @@ const withPostTitleFilter = createHigherOrderComponent((BlockEdit) => {
                                     suggestions={suggestions}
                                     onChange={handleChange}
                                     placeholder={__('投稿タイトルを入力...', 'query-loop-post-filter')}
-                                    __experimentalShowHowTo={false}
+                                    showHowTo={false}
                                 />
                                 <p className="components-base-control__help" style={{ marginTop: '8px' }}>
                                     {__('投稿タイトルを入力して選択してください。複数選択可能です。', 'query-loop-post-filter')}

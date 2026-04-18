@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "query-loop-post-filter/editor-extension",
+  "title": "Query Loop Post Filter",
+  "textdomain": "query-loop-post-filter",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css"
+}
